@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" href="style.css" />
+        <title>note app</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="wrapper">
+                <h1>Notes App</h1>
+                <button class="add" id="addBtn" onclick="add()">+ add new note</button>
+                <div class="box" id="box">
+                    <form class="form-group" id="form">
+                        <h1 style="color: black">add Note</h1>
+                        <input
+                            type="text"
+                            class="input"
+                            placeholder="Judul"
+                            name="judul"
+                            id="judul"
+                            required
+                        />
+                        <textarea
+                            class="input"
+                            placeholder="isi"
+                            name="isi"
+                            id="isi"
+                            rows="10"
+                            required
+                        ></textarea>
+                        <input type="submit" class="btn" id="btnSubmit" />
+                    </form>
+                    <button class="closeBtn" id="closeBtn" onclick="closeBtn()">X</button>
+                </div>
+            </div>
+            <ul class="list" id="list">
+                <!-- <li class="list-item">
+                    <h1 class="text-header">Judul</h1>
+                    <p class="text-note">Lorem ipsum dolor sit amet.</p>
+                    <span class="text-time">1-10-12</span>
+                    <button class="btn-list">X</button>
+                </li> -->
+            </ul>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
