@@ -1,51 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <link rel="stylesheet" href="style.css" />
-        <title>note app</title>
+        <!-- bootstrap link -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+            crossorigin="anonymous"
+        />
+
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+        />
+
+        <style>
+            .text-overflow {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        </style>
+        <title>Notes App</title>
     </head>
     <body>
-        <div class="container">
-            <div class="wrapper">
-                <h1>Notes App</h1>
-                <button class="add" id="addBtn" onclick="add()">+ add new note</button>
-                <div class="box" id="box">
-                    <form class="form-group" id="form">
-                        <h1 style="color: black">add Note</h1>
-                        <input
-                            type="text"
-                            class="input"
-                            placeholder="Judul"
-                            name="judul"
-                            id="judul"
-                            required
-                        />
-                        <textarea
-                            class="input"
-                            placeholder="isi"
-                            name="isi"
-                            id="isi"
-                            rows="10"
-                            required
-                        ></textarea>
-                        <input type="submit" class="btn" id="btnSubmit" />
-                    </form>
-                    <button class="closeBtn" id="closeBtn" onclick="closeBtn()">X</button>
+        <nav class="navbar bg-secondary p-4">
+            <div class="container">
+                <span class="text-white fs-2">Notes App</span>
+                <button
+                    type="button"
+                    class="btn btn-primary btn-lg"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
+                    data-bs-whatever="@getbootstrap"
+                >
+                    + Add Note
+                </button>
+                <!-- add -->
+                <div
+                    class="modal modal-xl fade"
+                    id="exampleModal"
+                    tabindex="-1"
+                    aria-labelledby="exampleModalLabel"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5">New Notes</h1>
+                                <button
+                                    type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="title" class="col-form-label">Title</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="title"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="noteText" class="col-form-label"
+                                            >Your Note</label
+                                        >
+                                        <textarea
+                                            class="form-control"
+                                            id="noteText"
+                                            rows="20"
+                                            required
+                                        ></textarea>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button
+                                            type="button"
+                                            class="btn btn-secondary"
+                                            data-bs-dismiss="modal"
+                                        >
+                                            Close
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary"
+                                            id="addNoteBtn"
+                                        >
+                                            Add Note
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <ul class="list" id="list">
-                <!-- <li class="list-item">
-                    <h1 class="text-header">Judul</h1>
-                    <p class="text-note">Lorem ipsum dolor sit amet.</p>
-                    <span class="text-time">1-10-12</span>
-                    <button class="btn-list">X</button>
-                </li> -->
-            </ul>
+        </nav>
+
+        <!-- detail -->
+        <div
+            class="modal fade"
+            id="detailModal"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="detailTitle"></h1>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body" id="detailBody"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-bs-target="#editModal"
+                            data-bs-toggle="modal"
+                        >
+                            Edit
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <!-- edit -->
+        <div
+            class="modal modal-xl fade"
+            id="editModal"
+            aria-hidden="true"
+            aria-labelledby="exampleModalToggleLabel2"
+            tabindex="-1"
+        >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Edit Note</h1>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editForm">
+                            <div class="mb-3">
+                                <label for="title" class="col-form-label">Title</label>
+                                <input type="text" class="form-control" id="editTitle" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="noteText" class="col-form-label">Your Note</label>
+                                <textarea
+                                    class="form-control"
+                                    id="editNoteText"
+                                    rows="20"
+                                    required
+                                ></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button
+                                    class="btn btn-secondary"
+                                    data-bs-target="#detailModal"
+                                    data-bs-toggle="modal"
+                                >
+                                    Back
+                                </button>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mt-5">
+            <div class="row justify-content-between" id="row"></div>
+        </div>
+
+        <!-- bootsrap link -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"
+        ></script>
+
+        <!-- js -->
         <script src="script.js"></script>
     </body>
 </html>

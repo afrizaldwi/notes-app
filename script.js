@@ -1,20 +1,9 @@
-const box = document.getElementById("box");
-
-function add() {
-    box.classList.add("active");
-    judul.value = "";
-    isi.value = "";
-}
-function closeBtn() {
-    box.classList.remove("active");
-}
-
-const judul = document.getElementById("judul");
-const isi = document.getElementById("isi");
-const form = document.getElementById("form");
+const form = document.querySelector("form");
+const nDate = new Date().toLocaleString();
 
 function generateId() {
-    const randomId = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+    const randomId = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!@#$%^&*()";
+
     let ID = "";
     for (let i = 0; i < 10; i++) {
         const randomIndex = Math.floor(Math.random() * randomId.length);
@@ -23,77 +12,113 @@ function generateId() {
     return ID;
 }
 
-// add Note
 form.addEventListener("submit", () => {
+    const title = document.getElementById("title");
+    const noteText = document.getElementById("noteText");
     const id = generateId();
-
-    const header = createTextElement("h1", "text-header", judul.value);
-    const p = createTextElement("p", "text-note", isi.value);
-
-    const nDate = new Date();
-    const span = createTextElement("span", "text-time", nDate.toLocaleString());
-
     const dataElement = {
         id: id,
-        judul: header.textContent,
-        isi: p.textContent,
-        timestamp: span.textContent,
+        title: title.value,
+        noteText: noteText.value,
+        timestamp: nDate,
     };
     localStorage.setItem(`element_${id}`, JSON.stringify(dataElement));
-
-    judul.value = "";
-    isi.value = "";
-
-    closeBtn();
 });
 
-// membuat element baru
-function createTextElement(tagName, className, textContent) {
-    const element = document.createElement(tagName);
-    element.className = className;
-    element.textContent = textContent;
-    return element;
-}
+const showData = Object.values(localStorage).map((item) => JSON.parse(item));
 
-// mengambil data dari localStorage
-const savedData = Object.values(localStorage).map((item) => JSON.parse(item));
+showData.forEach((data) => {
+    const htmlStructure = /*html*/ `
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-lg border-0" id="${data.id}" style="height:250px">
+            <div class="card-header">
+                <h4 class="card-title text-overflow">${data.title}</h4>
+            </div>
+            <div class="card-body mb-5">
+                <p class="card-text text-end">
+                    <small class="text-body-secondary">${data.timestamp}</small>
+                </p>
+                <p class="card-text text-overflow">${data.noteText}</p>
+            </div>
+            <button
+                type="button"
+                class="btn btn-info w-25 text-white position-absolute bottom-0 end-0 m-3 detailBtn"
+                data-bs-toggle="modal"
+                data-bs-target="#detailModal"
+            >
+                Detail
+            </button>
+            <button
+                type="button"
+                class="btn btn-danger position-absolute bottom-0 start-0 m-3 deleteBtn"
+            >
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    </div>
+    `;
 
-// menampilkan data dari localStorage
-savedData.forEach((data) => {
-    const li = document.createElement("li");
-    li.className = "list-item";
-    li.id = data.id;
-
-    const header = createTextElement("h1", "text-header", data.judul);
-    const p = createTextElement("p", "text-note", data.isi);
-    li.appendChild(header);
-    li.appendChild(p);
-
-    const span = createTextElement("span", "text-time", data.timestamp);
-    li.appendChild(span);
-
-    const button = createTextElement("button", "btn-list", "X");
-    li.appendChild(button);
-
-    list.appendChild(li);
+    const row = document.getElementById("row");
+    row.innerHTML += htmlStructure;
 });
-// === === === === ===
 
-// remove data
-function deleteData(li) {
-    const dataId = li.id;
-    localStorage.removeItem(`element_${dataId}`);
-    li.remove();
+function getId(dataId) {
+    return dataId.id;
 }
 
-list.addEventListener("click", (event) => {
-    if (event.target.classList.contains("btn-list")) {
-        const li = event.target.parentElement;
-        if (confirm("apakah data ingin dihapus ?")) {
-            console.log(li);
-            deleteData(li);
-            closeBtn();
+const row = document.getElementById("row");
+row.addEventListener("click", (event) => {
+    if (event.target.closest(".card")) {
+        const card = event.target.closest(".card");
+        const cardId = getId(card);
+        if (event.target.classList.contains("deleteBtn")) {
+            if (confirm("apakah anda yakin ?")) {
+                deleteData(cardId, card);
+                location.reload();
+            }
+        }
+        if (event.target.classList.contains("detailBtn")) {
+            detailData(cardId);
+        }
+        if (event.target.classList.contains("editBtn")) {
+            editData();
         }
     }
 });
-// === === === === ===
+
+function deleteData(dataId, card) {
+    localStorage.removeItem(`element_${dataId}`);
+    card.remove();
+}
+
+function detailData(dataId) {
+    const localData = localStorage.getItem(`element_${dataId}`);
+    const parseData = JSON.parse(localData);
+
+    const detailTitle = document.getElementById("detailTitle");
+    const detailBody = document.getElementById("detailBody");
+
+    detailTitle.textContent = parseData.title;
+    detailBody.textContent = parseData.noteText;
+
+    editData(parseData);
+}
+
+function editData(data) {
+    const editTitle = document.getElementById("editTitle");
+    const editNoteText = document.getElementById("editNoteText");
+
+    editTitle.value = data.title;
+    editNoteText.textContent = data.noteText;
+
+    const editForm = document.getElementById("editForm");
+    editForm.addEventListener("submit", () => {
+        const newDataElement = {
+            id: data.id,
+            title: editTitle.value,
+            noteText: editNoteText.value,
+            timestamp: nDate,
+        };
+        localStorage.setItem(`element_${data.id}`, JSON.stringify(newDataElement));
+    });
+}
